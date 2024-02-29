@@ -121,6 +121,7 @@ public class Utilities {
         setCaption(FIVE, ONE, TASK_LIST, table);
 
         setCaption(SIX, ZERO, CAPTION_ONE, table);
+        setCellValue(SIX,ONE,projectDetails.getPrjctDesc(),table);
         setCaption(SEVEN, ZERO, CAPTION_TWO, table);
         setCaption(EIGHT, ZERO, CAPTION_THREE, table);
 
@@ -173,6 +174,9 @@ public class Utilities {
         for (int i = cellTwentyIndex; i >= cellTwentyIndex - 2; i--) {
             eighteenSix.getCell(i).getCTTc().newCursor().removeXml();
         }
+        setCellValue(EIGHTEEN,ZERO,projectDetails.getMngrName(),table);
+        setCellValue(EIGHTEEN,ONE,projectDetails.getClientName(),table);
+
         String date = new SimpleDateFormat(PATTERN, Locale.getDefault()).format(new Date());
         FileOutputStream fstream = new FileOutputStream(ACCEPTANCE_REPORT+projectDetails.getProjectName() + date + ".docx");
         accptanceReport.write(fstream);

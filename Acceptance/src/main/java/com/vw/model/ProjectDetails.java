@@ -61,4 +61,8 @@ public class ProjectDetails{
 
     private double miscPricing;
 
+    private String mngrName;
+
+    private String clientName;
+
 }

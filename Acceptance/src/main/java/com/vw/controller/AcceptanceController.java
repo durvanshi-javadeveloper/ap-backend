@@ -10,7 +10,7 @@ import com.vw.service.AcceptanceService;
 import static com.vw.utility.Constants.ACCEPTANCE;
 import static com.vw.utility.Constants.CREATE_PROJECT;
 @RestController
-@CrossOrigin("http://localhost/3000")
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping(ACCEPTANCE)
 public class AcceptanceController {
     Logger log = LoggerFactory.getLogger(AcceptanceController.class);
