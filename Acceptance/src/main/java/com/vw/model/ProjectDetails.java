@@ -1,8 +1,12 @@
 package com.vw.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.Data;
+
+import java.util.Set;
 
 @Data
 @Entity
@@ -65,4 +69,6 @@ public class ProjectDetails{
 
     private String clientName;
 
+    @OneToMany(cascade = CascadeType.ALL)
+    private Set<LevelInfo> levelInfo;
 }
