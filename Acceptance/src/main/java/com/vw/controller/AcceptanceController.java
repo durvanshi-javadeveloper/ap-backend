@@ -21,7 +21,7 @@ public class AcceptanceController {
     public ResponseEntity<String> createProject(@RequestBody ProjectDetails projectDetails){
         log.info("In Controller......");
         ResponseEntity<String> projectResponse = acceptanceService.createProject(projectDetails);
-
+        log.info("Data has been stored and Report has been generated...");
         return projectResponse;
         //  return new ResponseEntity<>("Project Created "+projectDetails.getProjectId(),HttpStatus.CREATED);
     }
