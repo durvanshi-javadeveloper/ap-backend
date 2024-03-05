@@ -31,9 +31,9 @@ public class AcceptanceServiceImpl implements AcceptanceService {
         FileOutputStream fileReport = null;
         if (projectData == null) {
             projectDetails.setProjectId(projectId);
-            calCurrentMonthBdgt(projectDetails);
+            /*calCurrentMonthBdgt(projectDetails);
             calMiscBdgt(projectDetails);
-            calTotals(projectDetails);
+            calTotals(projectDetails);*/
             try {
                 Utilities.generateReport(projectDetails);
             } catch (IOException | InvalidFormatException e) {
@@ -49,7 +49,7 @@ public class AcceptanceServiceImpl implements AcceptanceService {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    private void calMiscBdgt(ProjectDetails projectDetails) {
+/*    private void calMiscBdgt(ProjectDetails projectDetails) {
         projectDetails.setMiscMonthlyBdgt(projectDetails.getMiscPricing());
         projectDetails.setMiscRemainBdgt(projectDetails.getMiscCost() - projectDetails.getMiscPricing());
     }
@@ -64,6 +64,6 @@ public class AcceptanceServiceImpl implements AcceptanceService {
         proData.setTotalCost(proData.getSrvcCost() + proData.getMiscCost());
         proData.setTotalMonthlyBdgt(proData.getSrvcMonthlyCost() + proData.getMiscMonthlyBdgt());
         proData.setTotalRemainBdgt(proData.getSrvcRemainBdgt() + proData.getMiscRemainBdgt());
-    }
+    }*/
 
 }

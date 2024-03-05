@@ -57,12 +57,6 @@ public class ProjectDetails{
 
     private double totalRemainBdgt;
 
-    private double level;
-
-    private double member;
-
-    private double pricing;
-
     private double miscPricing;
 
     private String mngrName;
