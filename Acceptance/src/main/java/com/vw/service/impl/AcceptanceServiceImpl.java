@@ -49,6 +49,12 @@ public class AcceptanceServiceImpl implements AcceptanceService {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @Override
+    public ProjectDetails getProject(String agrmntNumber) {
+       return repository.finByAgrmntNumber(agrmntNumber);
+
+    }
+
 /*    private void calMiscBdgt(ProjectDetails projectDetails) {
         projectDetails.setMiscMonthlyBdgt(projectDetails.getMiscPricing());
         projectDetails.setMiscRemainBdgt(projectDetails.getMiscCost() - projectDetails.getMiscPricing());

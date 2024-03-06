@@ -7,10 +7,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.vw.model.ProjectDetails;
 import com.vw.service.AcceptanceService;
-import static com.vw.utility.Constants.ACCEPTANCE;
-import static com.vw.utility.Constants.CREATE_PROJECT;
+
+import static com.vw.utility.Constants.*;
+
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = UI_URL)
 @RequestMapping(ACCEPTANCE)
 public class AcceptanceController {
     Logger log = LoggerFactory.getLogger(AcceptanceController.class);
@@ -26,6 +27,10 @@ public class AcceptanceController {
         //  return new ResponseEntity<>("Project Created "+projectDetails.getProjectId(),HttpStatus.CREATED);
     }
 
-//    localhost:8080/acceptance/create-project
+    public ResponseEntity<ProjectDetails> getProjectDetail(@PathVariable String agrmntNumber ){
+        ProjectDetails proDetails =null;
+        return ResponseEntity.ok().body(proDetails);
+    }
+
 
 }
