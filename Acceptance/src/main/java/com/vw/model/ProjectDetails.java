@@ -1,19 +1,20 @@
 package com.vw.model;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
+import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
 @Entity
-public class ProjectDetails{
+public class ProjectDetails {
 
     @Id
-    private String projectId;
+    @GeneratedValue
+    private Integer projectId;
 
     private String department;
 
@@ -63,6 +64,7 @@ public class ProjectDetails{
 
     private String clientName;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private Set<LevelInfo> levelInfo;
+    @OneToMany(targetEntity = LevelInfo.class, cascade = CascadeType.ALL)
+    @JoinColumn(name = "project_id", referencedColumnName = "projectId")
+    private Set<LevelInfo> levelInfo ;
 }

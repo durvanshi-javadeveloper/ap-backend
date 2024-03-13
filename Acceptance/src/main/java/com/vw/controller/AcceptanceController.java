@@ -19,7 +19,7 @@ public class AcceptanceController {
     private AcceptanceService acceptanceService;
 
     @PostMapping(value = CREATE_PROJECT)
-    public ResponseEntity<String> createProject(@RequestBody ProjectDetails projectDetails){
+    public ResponseEntity<String> createProject(@RequestBody ProjectDetails projectDetails) {
         log.info("In Controller......");
         ResponseEntity<String> projectResponse = acceptanceService.createProject(projectDetails);
         log.info("Data has been stored and Report has been generated...");
@@ -27,10 +27,10 @@ public class AcceptanceController {
         //  return new ResponseEntity<>("Project Created "+projectDetails.getProjectId(),HttpStatus.CREATED);
     }
 
-    public ResponseEntity<ProjectDetails> getProjectDetail(@PathVariable String agrmntNumber ){
-        ProjectDetails proDetails =null;
+    @GetMapping(value = "/{agrmntNumber}")
+    public ResponseEntity<ProjectDetails> getProjectDetail(@PathVariable String agrmntNumber) {
+        ProjectDetails proDetails = acceptanceService.getProject(agrmntNumber);
         return ResponseEntity.ok().body(proDetails);
     }
-
 
 }

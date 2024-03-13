@@ -3,6 +3,8 @@ package com.vw.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Entity
 @Data
 public class LevelInfo {
@@ -14,7 +16,7 @@ public class LevelInfo {
     private int member;
     private double price;
 
-    @ManyToOne
-    @JoinColumn(name = "projectId")
-    private ProjectDetails projectDetails;
+    /*@ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "project_id", nullable = false)
+    private ProjectDetails projectDetails;*/
 }

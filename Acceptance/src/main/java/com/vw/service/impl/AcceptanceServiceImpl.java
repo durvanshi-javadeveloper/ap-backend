@@ -1,6 +1,6 @@
 package com.vw.service.impl;
 
-import com.vw.controller.AcceptanceController;
+import com.vw.model.LevelInfo;
 import com.vw.repository.AcceptanceRepository;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.slf4j.Logger;
@@ -15,6 +15,7 @@ import com.vw.utility.Utilities;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Set;
 
 
 @Service
@@ -26,50 +27,31 @@ public class AcceptanceServiceImpl implements AcceptanceService {
     @Override
     public ResponseEntity<String> createProject(ProjectDetails projectDetails) {
         log.info("inside the createProject() method ");
-        String projectId = projectDetails.getProjectName().concat(projectDetails.getAgrmntNumber());
-        ProjectDetails projectData = repository.findByProjectId(projectId);
-        FileOutputStream fileReport = null;
+
+        ProjectDetails projectData = repository.findByProjectId(projectDetails.getProjectId());
         if (projectData == null) {
-            projectDetails.setProjectId(projectId);
-            /*calCurrentMonthBdgt(projectDetails);
-            calMiscBdgt(projectDetails);
-            calTotals(projectDetails);*/
             try {
                 Utilities.generateReport(projectDetails);
             } catch (IOException | InvalidFormatException e) {
                 e.printStackTrace();
             }
+            repository.save(projectDetails);
+            log.debug("Record has been Stored ");
+            return new ResponseEntity<>(HttpStatus.CREATED);
         } else {
-
-
+            try {
+                Utilities.generateReport(projectDetails);
+            } catch (IOException | InvalidFormatException e) {
+                e.printStackTrace();
+            }
+            repository.save(projectDetails);
+            return new ResponseEntity<>("Record Has been Updated ", HttpStatus.OK);
         }
-        repository.save(projectDetails);
-
-        log.debug("Record has been Stored ");
-        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @Override
     public ProjectDetails getProject(String agrmntNumber) {
-       return repository.finByAgrmntNumber(agrmntNumber);
-
+        return repository.finByAgrmntNumber(agrmntNumber);
     }
-
-/*    private void calMiscBdgt(ProjectDetails projectDetails) {
-        projectDetails.setMiscMonthlyBdgt(projectDetails.getMiscPricing());
-        projectDetails.setMiscRemainBdgt(projectDetails.getMiscCost() - projectDetails.getMiscPricing());
-    }
-
-    private void calCurrentMonthBdgt(ProjectDetails projectDetails) {
-        double totalMonthlyCost = projectDetails.getPricing() * projectDetails.getMember();
-        projectDetails.setSrvcMonthlyCost(totalMonthlyCost);
-        projectDetails.setSrvcRemainBdgt(projectDetails.getSrvcCost() - totalMonthlyCost);
-    }
-
-    private static void calTotals(ProjectDetails proData) {
-        proData.setTotalCost(proData.getSrvcCost() + proData.getMiscCost());
-        proData.setTotalMonthlyBdgt(proData.getSrvcMonthlyCost() + proData.getMiscMonthlyBdgt());
-        proData.setTotalRemainBdgt(proData.getSrvcRemainBdgt() + proData.getMiscRemainBdgt());
-    }*/
 
 }
