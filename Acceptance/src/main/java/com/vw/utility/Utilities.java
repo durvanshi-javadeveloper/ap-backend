@@ -30,17 +30,17 @@ public class Utilities {
         XWPFTable table = accptanceReport.createTable(TWENTY, FIVE);
         table.setCellMargins(0, 0, 0, 0);
         //table.getRow(ZERO).setHeight(5);
-        XWPFTableRow row1 = table.getRow(ZERO);
+       /* XWPFTableRow row1 = table.getRow(ZERO);
         CTTblPr tblPr = table.getCTTbl().getTblPr();
         tblPr = table.getCTTbl().addNewTblPr();
         CTTrPr trPr = row1.getCtRow().addNewTrPr();
         CTTblWidth spacing = trPr.addNewTblCellSpacing();
         spacing.setType(STTblWidth.AUTO);
-        spacing.setW(BigInteger.valueOf(50));
+        spacing.setW(BigInteger.valueOf(50));*/
         XWPFParagraph p1 = table.getRow(ZERO).getCell(ZERO).addParagraph();
         XWPFRun r1 = p1.createRun();
         FileInputStream fis = new FileInputStream("img_1.png");
-        r1.addPicture(fis, XWPFDocument.PICTURE_TYPE_PNG, "img_1", Units.toEMU(80),
+        r1.addPicture(fis, XWPFDocument.PICTURE_TYPE_PNG, "img_1", Units.toEMU(70),
                 Units.toEMU(70));
 
         table.getRow(ZERO).getCell(ONE).getCTTc().addNewTcPr().addNewGridSpan()
@@ -48,13 +48,13 @@ public class Utilities {
         XWPFParagraph p2 = table.getRow(ZERO).getCell(ONE).addParagraph();
         XWPFRun r2 = p2.createRun();
         FileInputStream fis2 = new FileInputStream("img_2.png");
-        r2.addPicture(fis2, XWPFDocument.PICTURE_TYPE_PNG, "img_2", Units.toEMU(350),
+        r2.addPicture(fis2, XWPFDocument.PICTURE_TYPE_PNG, "img_2", Units.toEMU(340),
                 Units.toEMU(70));
 
         XWPFParagraph p3 = table.getRow(ZERO).getCell(TWO).addParagraph();
         XWPFRun r3 = p3.createRun();
         FileInputStream fis3 = new FileInputStream("img.png");
-        r3.addPicture(fis3, XWPFDocument.PICTURE_TYPE_PNG, "img", Units.toEMU(80),
+        r3.addPicture(fis3, XWPFDocument.PICTURE_TYPE_PNG, "img", Units.toEMU(70),
                 Units.toEMU(70));
 
         XWPFTableRow row = table.getRow(ZERO);
@@ -98,7 +98,7 @@ public class Utilities {
         setCaption(ONE, THREE, BILLING_PERIOD, table);
         //Set Billing Period Value
 
-        String padded = String.format("%-50s", " to");
+        String padded = String.format("%-40s", " to");
         String splitDate = projectDetails.getFromDate() + padded + projectDetails.getToDate();
         setCellValue(TWO, THREE, splitDate, table);
         //Set Agreement Number Caption
@@ -136,15 +136,25 @@ public class Utilities {
         setCaption(FIVE, ZERO, SR, table);
         //Set Task List Caption
         setCaption(FIVE, ONE, TASK_LIST, table);
-
-        setCaption(SIX, ZERO, CAPTION_ONE, table);
+        String[] proDesc = projectDetails.getPrjctDesc().split("\\.");
+        int COUNT = 6;
+        int srNumber =1;
+        for (String proData : proDesc) {
+            setCaption(COUNT, ZERO, srNumber + "", table);
+            setCellValue(COUNT, ONE, proData, table);
+            COUNT++;
+            srNumber++;
+        }
+        /*setCaption(SIX, ZERO, CAPTION_ONE, table);
         setCellValue(SIX, ONE, projectDetails.getPrjctDesc(), table);
         setCaption(SEVEN, ZERO, CAPTION_TWO, table);
-        setCaption(EIGHT, ZERO, CAPTION_THREE, table);
+        setCaption(EIGHT, ZERO, CAPTION_THREE, table);*/
         //Merge
-      /* // table.getRow(THIRTEEN).getCell(FOUR).setWidth("0");
-        table.getRow(THIRTEEN).getCell(ONE).setWidth("10");
-        table.getRow(THIRTEEN).getCell(TWO).setWidth("10");*/
+        table.getRow(THIRTEEN).getCell(FOUR).setWidth("0%");
+        table.getRow(THIRTEEN).getCell(ZERO).setWidth("20%");
+        table.getRow(THIRTEEN).getCell(ONE).setWidth("40%");
+        table.getRow(THIRTEEN).getCell(TWO).setWidth("35%");
+        table.getRow(THIRTEEN).getCell(THREE).setWidth("20%");
         mergeCells(THIRTEEN, THREE, STMerge.RESTART, table);
         mergeCells(FOURTEEN, THREE, STMerge.RESTART, table);
         mergeCells(FIFTEEN, THREE, STMerge.RESTART, table);
@@ -199,7 +209,7 @@ public class Utilities {
                 commonData.append("L2 :" + lData.getMember() + " (" + lData.getPrice() + ")");
             }
         }
-        String DECLAIRMENT = "We hereby  declare that the information on this Acceptance Criteria is correct and the invoice for month of " + ukDate + " will be billed for amount of €" + projectDetails.getTotalMonthlyBdgt() + "." + String.format("%-75s", " ")
+        String DECLAIRMENT = "We hereby  declare that the information on this Acceptance Criteria is correct and the invoice for month of " + ukDate + " will be billed for amount of €" + projectDetails.getTotalMonthlyBdgt() + "." + String.format("%-90s", " ")
                 .concat(String.valueOf(commonData));
         //Set Declairation Caption
         setCaption(SEVENTEEN, ZERO, DECLAIRMENT, table);

@@ -35,7 +35,7 @@ public class AcceptanceServiceImpl implements AcceptanceService {
             } catch (IOException | InvalidFormatException e) {
                 e.printStackTrace();
             }
-            repository.save(projectDetails);
+           // repository.save(projectDetails);
             log.debug("Record has been Stored ");
             return new ResponseEntity<>(HttpStatus.CREATED);
         } else {
@@ -44,7 +44,7 @@ public class AcceptanceServiceImpl implements AcceptanceService {
             } catch (IOException | InvalidFormatException e) {
                 e.printStackTrace();
             }
-            repository.save(projectDetails);
+           // repository.save(projectDetails);
             return new ResponseEntity<>("Record Has been Updated ", HttpStatus.OK);
         }
     }
