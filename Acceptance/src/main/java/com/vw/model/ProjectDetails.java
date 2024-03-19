@@ -5,16 +5,16 @@ import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 @Data
-@Entity
+@Entity(name = "projectDetails")
 public class ProjectDetails {
 
     @Id
-    @GeneratedValue
-    private Integer projectId;
+    private String agrmntNumber;
 
     private String department;
 
@@ -22,13 +22,11 @@ public class ProjectDetails {
 
     private String projectName;
 
-    private String date;
+    private String generatedDate;
 
     private String fromDate;
 
     private String toDate;
-
-    private String agrmntNumber;
 
     private String ordrNumber;
 
@@ -65,6 +63,10 @@ public class ProjectDetails {
     private String clientName;
 
     @OneToMany(targetEntity = LevelInfo.class, cascade = CascadeType.ALL)
-    @JoinColumn(name = "project_id", referencedColumnName = "projectId")
-    private Set<LevelInfo> levelInfo ;
+    @JoinColumn(name = "agrmnt_Number", referencedColumnName = "agrmntNumber")
+    private Set<LevelInfo> levelInfo;
+
+    /*@OneToOne(targetEntity = CostDetails.class,cascade = CascadeType.ALL)
+    private CostDetails costDetails;*/
+
 }

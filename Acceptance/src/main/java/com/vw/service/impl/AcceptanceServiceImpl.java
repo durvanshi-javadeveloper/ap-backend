@@ -1,6 +1,5 @@
 package com.vw.service.impl;
 
-import com.vw.model.LevelInfo;
 import com.vw.repository.AcceptanceRepository;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.slf4j.Logger;
@@ -13,9 +12,8 @@ import com.vw.model.ProjectDetails;
 import com.vw.service.AcceptanceService;
 import com.vw.utility.Utilities;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Set;
+import java.time.LocalDate;
 
 
 @Service
@@ -24,18 +22,49 @@ public class AcceptanceServiceImpl implements AcceptanceService {
     @Autowired
     private AcceptanceRepository repository;
 
+    ResponseEntity response = null;
+
     @Override
     public ResponseEntity<String> createProject(ProjectDetails projectDetails) {
         log.info("inside the createProject() method ");
+        if (projectDetails != null) {
+            LocalDate startDate = Utilities.dateConvert(projectDetails.getFromDate());
+            LocalDate endDate = Utilities.dateConvert(projectDetails.getToDate());
+            for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusMonths(1)) {
+                System.out.println(date.getYear());
+                if (date.isEqual(startDate)) {
+                    try {
+                        Utilities.generateReport(projectDetails, date);
+                    } catch (IOException | InvalidFormatException e) {
+                        e.printStackTrace();
+                    }
+                    repository.save(projectDetails);
+                    log.debug("Record has been Stored ");
+                    response = new ResponseEntity(HttpStatus.CREATED);
 
-        ProjectDetails projectData = repository.findByProjectId(projectDetails.getProjectId());
+                } else {
+                    Utilities.calculateOtherMonths(projectDetails);
+                    try {
+                        Utilities.generateReport(projectDetails, date);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (InvalidFormatException e) {
+                        e.printStackTrace();
+                    }
+                    repository.save(projectDetails);
+                    log.debug("Record has been Stored ");
+                    response = new ResponseEntity(HttpStatus.CREATED);
+                }
+            }
+        }
+        /*ProjectDetails projectData = repository.findByAgrmntNumber(projectDetails.getAgrmntNumber());
         if (projectData == null) {
             try {
                 Utilities.generateReport(projectDetails);
             } catch (IOException | InvalidFormatException e) {
                 e.printStackTrace();
             }
-           // repository.save(projectDetails);
+            repository.save(projectDetails);
             log.debug("Record has been Stored ");
             return new ResponseEntity<>(HttpStatus.CREATED);
         } else {
@@ -44,14 +73,16 @@ public class AcceptanceServiceImpl implements AcceptanceService {
             } catch (IOException | InvalidFormatException e) {
                 e.printStackTrace();
             }
-           // repository.save(projectDetails);
+            repository.save(projectDetails);
             return new ResponseEntity<>("Record Has been Updated ", HttpStatus.OK);
-        }
+        }*/
+        return response;
     }
 
+
     @Override
-    public ProjectDetails getProject(String agrmntNumber) {
-        return repository.finByAgrmntNumber(agrmntNumber);
+    public ProjectDetails getProject(String agrmntNumber, String generatedDate) {
+        return repository.findByAgrmntNumberAndGeneratedDate(agrmntNumber, generatedDate);
     }
 
 }

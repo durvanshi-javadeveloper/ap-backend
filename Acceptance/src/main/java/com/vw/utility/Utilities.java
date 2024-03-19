@@ -1,7 +1,6 @@
 package com.vw.utility;
 
 import com.vw.model.LevelInfo;
-import org.apache.commons.codec.binary.StringUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.usermodel.*;
@@ -13,10 +12,14 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Locale;
 import java.lang.*;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 import static com.vw.utility.Constants.*;
@@ -24,19 +27,12 @@ import static com.vw.utility.Constants.*;
 public class Utilities {
     static Logger log = LoggerFactory.getLogger(Utilities.class);
 
-    public static FileOutputStream generateReport(ProjectDetails projectDetails) throws IOException, InvalidFormatException {
+    public static FileOutputStream generateReport(ProjectDetails projectDetails, LocalDate localDate) throws IOException, InvalidFormatException {
         log.info("inside the generateReport() Method");
         XWPFDocument accptanceReport = new XWPFDocument();
         XWPFTable table = accptanceReport.createTable(TWENTY, FIVE);
         table.setCellMargins(0, 0, 0, 0);
-        //table.getRow(ZERO).setHeight(5);
-       /* XWPFTableRow row1 = table.getRow(ZERO);
-        CTTblPr tblPr = table.getCTTbl().getTblPr();
-        tblPr = table.getCTTbl().addNewTblPr();
-        CTTrPr trPr = row1.getCtRow().addNewTrPr();
-        CTTblWidth spacing = trPr.addNewTblCellSpacing();
-        spacing.setType(STTblWidth.AUTO);
-        spacing.setW(BigInteger.valueOf(50));*/
+
         XWPFParagraph p1 = table.getRow(ZERO).getCell(ZERO).addParagraph();
         XWPFRun r1 = p1.createRun();
         FileInputStream fis = new FileInputStream("img_1.png");
@@ -97,7 +93,6 @@ public class Utilities {
         //Set Billing Period Caption
         setCaption(ONE, THREE, BILLING_PERIOD, table);
         //Set Billing Period Value
-
         String padded = String.format("%-40s", " to");
         String splitDate = projectDetails.getFromDate() + padded + projectDetails.getToDate();
         setCellValue(TWO, THREE, splitDate, table);
@@ -138,17 +133,13 @@ public class Utilities {
         setCaption(FIVE, ONE, TASK_LIST, table);
         String[] proDesc = projectDetails.getPrjctDesc().split("\\.");
         int COUNT = 6;
-        int srNumber =1;
+        int srNumber = 1;
         for (String proData : proDesc) {
             setCaption(COUNT, ZERO, srNumber + "", table);
             setCellValue(COUNT, ONE, proData, table);
             COUNT++;
             srNumber++;
         }
-        /*setCaption(SIX, ZERO, CAPTION_ONE, table);
-        setCellValue(SIX, ONE, projectDetails.getPrjctDesc(), table);
-        setCaption(SEVEN, ZERO, CAPTION_TWO, table);
-        setCaption(EIGHT, ZERO, CAPTION_THREE, table);*/
         //Merge
         table.getRow(THIRTEEN).getCell(FOUR).setWidth("0%");
         table.getRow(THIRTEEN).getCell(ZERO).setWidth("20%");
@@ -248,17 +239,23 @@ public class Utilities {
         setCellValue(EIGHTEEN, ONE, projectDetails.getClientName(), table);
 
         String date = new SimpleDateFormat(PATTERN, Locale.getDefault()).format(new Date());
-        FileOutputStream fstream = new FileOutputStream(ACCEPTANCE_REPORT + projectDetails.getProjectName() + date + ".docx");
+        FileOutputStream fstream = new FileOutputStream(ACCEPTANCE_REPORT + projectDetails.getProjectName()
+                + "-" + localDate.getMonth() + "-" + localDate.getYear() + ".docx");
         accptanceReport.write(fstream);
         return fstream;
     }
 
     public static void setCaption(int rowNum, int cellNum, String caption, XWPFTable table) {
         XWPFParagraph paragraphArray = table.getRow(rowNum).getCell(cellNum).getParagraphArray(0);
-        paragraphArray.setAlignment(ParagraphAlignment.CENTER);
+        if (rowNum == SEVENTEEN && cellNum == ZERO) {
+            paragraphArray.setAlignment(ParagraphAlignment.LEFT);
+        } else {
+            paragraphArray.setAlignment(ParagraphAlignment.CENTER);
+        }
         XWPFRun capProject = paragraphArray.createRun();
         capProject.setBold(true);
         capProject.setText(caption);
+
     }
 
     public static void setCellValue(int rowNum, int cellNum, String fieldValue, XWPFTable table) {
@@ -273,4 +270,19 @@ public class Utilities {
         table.getRow(inCell).getCell(mergeCell).getCTTc().addNewTcPr().setHMerge(hMerge1);
     }
 
+    public static LocalDate dateConvert(String date) {
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
+        LocalDate formattedDate = LocalDate.parse(date, df);
+        return formattedDate;
+    }
+
+    public static void calculateOtherMonths(ProjectDetails proData) {
+        Set<LevelInfo> levelInfo = proData.getLevelInfo();
+        Optional<Double> reduce = levelInfo.stream().map(e -> e.getPrice() * e.getMember()).collect(Collectors.toList())
+                .stream().reduce(Double::sum);
+        proData.setTotalMonthlyBdgt(proData.getSrvcRemainBdgt() + proData.getMiscMonthlyBdgt());
+        proData.setSrvcRemainBdgt(proData.getSrvcRemainBdgt() - reduce.get());
+        proData.setMiscRemainBdgt(proData.getMiscRemainBdgt() - proData.getMiscMonthlyBdgt());
+        proData.setTotalRemainBdgt(proData.getSrvcRemainBdgt() + proData.getMiscRemainBdgt());
+    }
 }

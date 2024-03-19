@@ -27,9 +27,9 @@ public class AcceptanceController {
         //  return new ResponseEntity<>("Project Created "+projectDetails.getProjectId(),HttpStatus.CREATED);
     }
 
-    @GetMapping(value = "/{agrmntNumber}")
-    public ResponseEntity<ProjectDetails> getProjectDetail(@PathVariable String agrmntNumber) {
-        ProjectDetails proDetails = acceptanceService.getProject(agrmntNumber);
+    @GetMapping(value = "/{agrmntNumber}/{generatedDate}")
+    public ResponseEntity<ProjectDetails> getProjectDetail(@PathVariable String agrmntNumber, @PathVariable String generatedDate) {
+        ProjectDetails proDetails = acceptanceService.getProject(agrmntNumber, generatedDate);
         return ResponseEntity.ok().body(proDetails);
     }
 

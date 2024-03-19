@@ -7,10 +7,11 @@ import org.springframework.stereotype.Repository;
 import com.vw.model.ProjectDetails;
 
 @Repository
-public interface AcceptanceRepository extends JpaRepository<ProjectDetails, Integer> {
+public interface AcceptanceRepository extends JpaRepository<ProjectDetails, String> {
 
-    ProjectDetails findByProjectId(Integer projectId);
+/*    ProjectDetails findByAgrmntNumber(String agrmntNumbery, String generatedDate);*/
 
-    @Query(value = "SELECT * FROM project_details p WHERE p.agrmnt_Number=?1", nativeQuery = true)
-    ProjectDetails finByAgrmntNumber(@Param(value = "agrmntNumber") String agrmntNumber);
+    @Query(value = "SELECT * FROM project_details p WHERE p.agrmnt_Number=?1 AND p.generated_Date=?2", nativeQuery = true)
+    ProjectDetails findByAgrmntNumberAndGeneratedDate(@Param(value = "agrmntNumber") String agrmntNumber,
+                                                      @Param(value = "generatedDate") String generatedDate);
 }

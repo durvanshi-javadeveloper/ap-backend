@@ -7,7 +7,7 @@ import com.vw.model.ProjectDetails;
 public interface AcceptanceService {
 
     public ResponseEntity<String> createProject(ProjectDetails projectDetails);
-    public ProjectDetails getProject(String agrmntNumber);
+    public ProjectDetails getProject(String agrmntNumber, String generatedDate);
 
 
 }
