@@ -16,6 +16,8 @@ public class ProjectDetails {
     @Id
     private String agrmntNumber;
 
+    private String brandName;
+
     private String department;
 
     private String subDeprtmt;

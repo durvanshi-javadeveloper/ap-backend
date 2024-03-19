@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.math.BigInteger;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -270,9 +272,21 @@ public class Utilities {
         table.getRow(inCell).getCell(mergeCell).getCTTc().addNewTcPr().setHMerge(hMerge1);
     }
 
-    public static LocalDate dateConvert(String date) {
-        DateTimeFormatter df = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
-        LocalDate formattedDate = LocalDate.parse(date, df);
+    public static LocalDate dateConvert(String inputDate) {
+        SimpleDateFormat inputFormat = new SimpleDateFormat(INPUT_FORMAT);
+        SimpleDateFormat outputFormat = new SimpleDateFormat(OUTPUT_FORMATE);
+        LocalDate formattedDate = null;
+        try {
+            Date date = inputFormat.parse(inputDate);
+            String result = outputFormat.format(date);
+            System.out.println("Result : " + result);
+            DateTimeFormatter df = DateTimeFormatter.ofPattern(OUTPUT_FORMATE);
+            formattedDate = LocalDate.parse(result,df);
+
+            System.out.println("Result : " + formattedDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         return formattedDate;
     }
 
@@ -285,4 +299,5 @@ public class Utilities {
         proData.setMiscRemainBdgt(proData.getMiscRemainBdgt() - proData.getMiscMonthlyBdgt());
         proData.setTotalRemainBdgt(proData.getSrvcRemainBdgt() + proData.getMiscRemainBdgt());
     }
+
 }
