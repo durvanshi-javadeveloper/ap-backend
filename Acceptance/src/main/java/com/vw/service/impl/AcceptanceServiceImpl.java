@@ -44,6 +44,8 @@ public class AcceptanceServiceImpl implements AcceptanceService {
 
                 } else {
                     Utilities.calculateOtherMonths(projectDetails);
+                    ProjectDetails projectClone = new ProjectDetails();
+                    Utilities.prepairePersistanceData(projectDetails,projectClone);
                     try {
                         Utilities.generateReport(projectDetails, date);
                     } catch (IOException e) {
@@ -51,7 +53,7 @@ public class AcceptanceServiceImpl implements AcceptanceService {
                     } catch (InvalidFormatException e) {
                         e.printStackTrace();
                     }
-                    repository.save(projectDetails);
+                    repository.save(projectClone);
                     log.debug("Record has been Stored ");
                     response = new ResponseEntity(HttpStatus.CREATED);
                 }

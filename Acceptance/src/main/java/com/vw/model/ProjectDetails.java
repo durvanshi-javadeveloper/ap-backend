@@ -2,11 +2,6 @@ package com.vw.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
-
-import java.io.Serializable;
-import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -14,6 +9,9 @@ import java.util.Set;
 public class ProjectDetails {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer projectId;
+
     private String agrmntNumber;
 
     private String brandName;
@@ -65,7 +63,7 @@ public class ProjectDetails {
     private String clientName;
 
     @OneToMany(targetEntity = LevelInfo.class, cascade = CascadeType.ALL)
-    @JoinColumn(name = "agrmnt_Number", referencedColumnName = "agrmntNumber")
+    @JoinColumn(name = "project_id", referencedColumnName = "projectId")
     private Set<LevelInfo> levelInfo;
 
     /*@OneToOne(targetEntity = CostDetails.class,cascade = CascadeType.ALL)

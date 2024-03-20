@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import com.vw.model.ProjectDetails;
 
 @Repository
-public interface AcceptanceRepository extends JpaRepository<ProjectDetails, String> {
+public interface AcceptanceRepository extends JpaRepository<ProjectDetails, Integer> {
 
 /*    ProjectDetails findByAgrmntNumber(String agrmntNumbery, String generatedDate);*/
 

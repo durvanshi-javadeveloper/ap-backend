@@ -16,11 +16,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.Locale;
+import java.util.*;
 import java.lang.*;
-import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -281,9 +278,7 @@ public class Utilities {
             String result = outputFormat.format(date);
             System.out.println("Result : " + result);
             DateTimeFormatter df = DateTimeFormatter.ofPattern(OUTPUT_FORMATE);
-            formattedDate = LocalDate.parse(result,df);
-
-            System.out.println("Result : " + formattedDate);
+            formattedDate = LocalDate.parse(result, df);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -294,10 +289,58 @@ public class Utilities {
         Set<LevelInfo> levelInfo = proData.getLevelInfo();
         Optional<Double> reduce = levelInfo.stream().map(e -> e.getPrice() * e.getMember()).collect(Collectors.toList())
                 .stream().reduce(Double::sum);
-        proData.setTotalMonthlyBdgt(proData.getSrvcRemainBdgt() + proData.getMiscMonthlyBdgt());
+
         proData.setSrvcRemainBdgt(proData.getSrvcRemainBdgt() - reduce.get());
+        proData.setTotalMonthlyBdgt(proData.getSrvcMonthlyCost() + proData.getMiscMonthlyBdgt());
         proData.setMiscRemainBdgt(proData.getMiscRemainBdgt() - proData.getMiscMonthlyBdgt());
         proData.setTotalRemainBdgt(proData.getSrvcRemainBdgt() + proData.getMiscRemainBdgt());
     }
 
+    public static void prepairePersistanceData(ProjectDetails proDetails,
+                                               ProjectDetails proPersist) {
+        proDetails.setGeneratedDate(dateConvert(proDetails.getGeneratedDate()).plusMonths(1).toString());
+        proPersist.setAgrmntNumber(proDetails.getAgrmntNumber());
+        proPersist.setBrandName(proDetails.getBrandName());
+        proPersist.setDepartment(proDetails.getDepartment());
+        proPersist.setSubDeprtmt(proDetails.getSubDeprtmt());
+        proPersist.setProjectName(proDetails.getProjectName());
+        proPersist.setGeneratedDate(proDetails.getGeneratedDate());
+        proPersist.setFromDate(proDetails.getFromDate());
+        proPersist.setToDate(proDetails.getToDate());
+        proPersist.setOrdrNumber(proDetails.getOrdrNumber());
+        proPersist.setRespPersonal(proDetails.getRespPersonal());
+        proPersist.setSrvcProvider(proDetails.getSrvcProvider());
+        proPersist.setSrvcReceiver(proDetails.getSrvcReceiver());
+        proPersist.setPrjctDesc(proDetails.getPrjctDesc());
+
+        //CostDetails
+        proPersist.setSrvcCost(proDetails.getSrvcCost());
+        proPersist.setSrvcMonthlyCost(proDetails.getSrvcMonthlyCost());
+        proPersist.setSrvcRemainBdgt(proDetails.getSrvcRemainBdgt());
+        proPersist.setMiscCost(proDetails.getMiscCost());
+        proPersist.setMiscMonthlyBdgt(proDetails.getMiscMonthlyBdgt());
+        proPersist.setMiscRemainBdgt(proDetails.getMiscRemainBdgt());
+        proPersist.setTotalCost(proDetails.getTotalCost());
+        proPersist.setTotalMonthlyBdgt(proDetails.getTotalMonthlyBdgt());
+        proPersist.setTotalRemainBdgt(proDetails.getTotalRemainBdgt());
+        proPersist.setMiscPricing(proDetails.getMiscPricing());
+        proPersist.setMngrName(proDetails.getMngrName());
+        proPersist.setClientName(proDetails.getClientName());
+        prepaireLevelInfo(proPersist,proDetails);
+
+    }
+
+    private static void prepaireLevelInfo(ProjectDetails proPersist, ProjectDetails proDetails) {
+        Set<LevelInfo> levelSet = new HashSet<>();
+        for (LevelInfo levelInfo : proDetails.getLevelInfo()) {
+            LevelInfo levelData = new LevelInfo();
+            levelData.setLevel(levelInfo.getLevel());
+            levelData.setMember(levelInfo.getMember());
+            levelData.setPrice(levelInfo.getPrice());
+            levelSet.add(levelData);
+        }
+        proPersist.setLevelInfo(levelSet);
+    }
+
 }
+
