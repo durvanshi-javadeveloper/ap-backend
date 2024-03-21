@@ -285,20 +285,27 @@ public class Utilities {
         return formattedDate;
     }
 
-    public static void calculateOtherMonths(ProjectDetails proData) {
-        Set<LevelInfo> levelInfo = proData.getLevelInfo();
-        Optional<Double> reduce = levelInfo.stream().map(e -> e.getPrice() * e.getMember()).collect(Collectors.toList())
-                .stream().reduce(Double::sum);
-
-        proData.setSrvcRemainBdgt(proData.getSrvcRemainBdgt() - reduce.get());
-        proData.setTotalMonthlyBdgt(proData.getSrvcMonthlyCost() + proData.getMiscMonthlyBdgt());
-        proData.setMiscRemainBdgt(proData.getMiscRemainBdgt() - proData.getMiscMonthlyBdgt());
-        proData.setTotalRemainBdgt(proData.getSrvcRemainBdgt() + proData.getMiscRemainBdgt());
+    public static void calculateCostPerMonth(ProjectDetails proData, ProjectDetails preRecord) {
+        if (preRecord != null) {
+            Optional<Double> reduce = proData.getLevelInfo().stream().map(e -> e.getPrice() * e.getMember()).collect(Collectors.toList())
+                    .stream().reduce(Double::sum);
+            proData.setSrvcRemainBdgt(preRecord.getSrvcRemainBdgt() - reduce.get());
+            proData.setTotalMonthlyBdgt(preRecord.getSrvcMonthlyCost() + proData.getMiscMonthlyBdgt());
+            proData.setMiscRemainBdgt(preRecord.getMiscRemainBdgt() - proData.getMiscMonthlyBdgt());
+            proData.setTotalRemainBdgt(preRecord.getSrvcRemainBdgt() + proData.getMiscRemainBdgt());
+        } else {
+            Optional<Double> reduce = proData.getLevelInfo().stream().map(e -> e.getPrice() * e.getMember()).collect(Collectors.toList())
+                    .stream().reduce(Double::sum);
+            proData.setSrvcRemainBdgt(proData.getSrvcRemainBdgt() - reduce.get());
+            proData.setTotalMonthlyBdgt(proData.getSrvcMonthlyCost() + proData.getMiscMonthlyBdgt());
+            proData.setMiscRemainBdgt(proData.getMiscRemainBdgt() - proData.getMiscMonthlyBdgt());
+            proData.setTotalRemainBdgt(proData.getSrvcRemainBdgt() + proData.getMiscRemainBdgt());
+        }
     }
 
     public static void prepairePersistanceData(ProjectDetails proDetails,
-                                               ProjectDetails proPersist) {
-        proDetails.setGeneratedDate(dateConvert(proDetails.getGeneratedDate()).plusMonths(1).toString());
+                                                         ProjectDetails proPersist) {
+
         proPersist.setAgrmntNumber(proDetails.getAgrmntNumber());
         proPersist.setBrandName(proDetails.getBrandName());
         proPersist.setDepartment(proDetails.getDepartment());
@@ -326,8 +333,8 @@ public class Utilities {
         proPersist.setMiscPricing(proDetails.getMiscPricing());
         proPersist.setMngrName(proDetails.getMngrName());
         proPersist.setClientName(proDetails.getClientName());
-        prepaireLevelInfo(proPersist,proDetails);
-
+        prepaireLevelInfo(proPersist, proDetails);
+        // proDetails.setGeneratedDate(Utilities.dateConvert(proDetails.getGeneratedDate()).plusMonths(1).toString());
     }
 
     private static void prepaireLevelInfo(ProjectDetails proPersist, ProjectDetails proDetails) {
